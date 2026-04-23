@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "网页截屏",
+  "description": "截取网页滚动区域并拼接成一张图片，支持不同分辨率、文件大小上限、保存和剪贴板复制。",
+  "version": "1.0.28",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icons/scissor-crop-16.png",
+    "32": "icons/scissor-crop-32.png",
+    "48": "icons/scissor-crop-48.png",
+    "128": "icons/scissor-crop-128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "clipboardWrite",
+    "downloads",
+    "offscreen",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/scissor-crop-16.png",
+      "32": "icons/scissor-crop-32.png",
+      "48": "icons/scissor-crop-48.png",
+      "128": "icons/scissor-crop-128.png"
+    },
+    "default_popup": "popup.html",
+    "default_title": "网页截屏"
+  }
+}
