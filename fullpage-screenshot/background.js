@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         .catch((error) => sendResponse({ ok: false, error: error.message }));
       return true;
     case "DOWNLOAD_CAPTURE_RESULT":
-      handleDeferredDownload(message.payload)
+      handleDeferredDownloadWithTabSync(message.payload)
         .then((result) => sendResponse({ ok: true, result }))
         .catch((error) => sendResponse({ ok: false, error: error.message }));
       return true;
@@ -288,6 +288,59 @@ async function handleDeferredDownload(payload = {}) {
   return {
     downloaded: true
   };
+}
+
+async function handleDeferredDownloadWithTabSync(payload = {}) {
+  const tab = await getActiveTab().catch(() => null);
+  const tabId = tab?.id || null;
+
+  if (!payload.downloadUrl || !payload.filename) {
+    const error = new Error("下载信息不完整，无法保存图片。");
+    updateStatus({
+      busy: false,
+      percent: 0,
+      message: "导出失败",
+      detail: error.message,
+      error: true
+    }, tabId);
+    throw error;
+  }
+
+  try {
+    updateStatus({
+      busy: true,
+      percent: 98,
+      message: "启动下载",
+      detail: "剪贴板处理完成，正在保存图片。"
+    }, tabId);
+
+    await downloadWithFallback(payload.downloadUrl, payload.filename, payload.saveAs !== false);
+
+    updateStatus({
+      busy: false,
+      percent: 100,
+      message: "导出完成",
+      detail: [
+        `${payload.width || 0} × ${payload.height || 0}px / ${formatBytes(payload.fileSizeBytes)}`,
+        payload.clipboardCopied
+          ? "已同步复制到系统剪贴板"
+          : (payload.clipboardError ? `剪贴板复制失败：${payload.clipboardError}` : "")
+      ].filter(Boolean).join(" / ")
+    }, tabId);
+
+    return {
+      downloaded: true
+    };
+  } catch (error) {
+    updateStatus({
+      busy: false,
+      percent: 0,
+      message: "导出失败",
+      detail: error.message,
+      error: true
+    }, tabId);
+    throw error;
+  }
 }
 
 async function handleStartLinePick(options = {}) {
