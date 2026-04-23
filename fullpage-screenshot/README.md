@@ -2,6 +2,7 @@
 
 ![网页截屏 Icon](icons/scissor-crop-128.png)
 
+
 一个适用于 Chrome 116+ 的网页截图扩展，支持整页截图、指定滚动区域截图、自选屏幕范围截图、起止线截图，以及按分辨率和目标文件大小上限导出。
 
 A Chrome 116+ extension for capturing full-page screenshots with support for specific scroll regions, custom screen ranges, line-range capture, and export options for resolution and target file size limit.
