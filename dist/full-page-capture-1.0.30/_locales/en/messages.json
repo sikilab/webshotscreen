@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Full Page Capture"
+  },
+  "appDescription": {
+    "message": "Capture and stitch scrolling web content into one image with export resolution, file size limit, save, and clipboard copy support."
+  }
+}

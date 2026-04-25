@@ -183,6 +183,72 @@ async function handleCapture(options = {}, explicitTab = null) {
       message: "拼接图片",
       detail: "正在离屏合成截图。"
     }, tab.id);
+    const splitRects = buildAutoSplitExportRects(capturePlan, metrics, options.splitHeightThresholdPx);
+    const shouldSplit = splitRects.length > 1;
+
+    if (shouldSplit) {
+      updateStatus({
+        busy: true,
+        percent: 88,
+        message: "自动分段导出",
+        detail: `导出高度超过阈值，已拆分为 ${splitRects.length} 张以保持清晰度。`
+      }, tab.id);
+
+      let firstResult = null;
+      let totalFileSizeBytes = 0;
+      for (let index = 0; index < splitRects.length; index += 1) {
+        const partRect = splitRects[index];
+        const partResult = await runOffscreenTask({
+          type: "STITCH_AND_DOWNLOAD",
+          metrics: {
+            ...capturePlan.exportMetrics,
+            exportRect: partRect,
+            exportWidth: partRect.width,
+            exportHeight: partRect.height
+          },
+          tiles,
+          options: {
+            ...options,
+            deferDownloadForClipboard: false,
+            copyToClipboard: index === 0
+          },
+          pageTitle: tab.title || "网页截图",
+          pageUrl: tab.url
+        });
+        const partFilename = appendFilenameSuffix(partResult.filename, `_part${String(index + 1).padStart(2, "0")}`);
+        await downloadWithFallback(partResult.downloadUrl, partFilename, false);
+        totalFileSizeBytes += Number(partResult.fileSizeBytes) || 0;
+        if (!firstResult) {
+          firstResult = partResult;
+        }
+
+        const percent = 88 + Math.round(((index + 1) / splitRects.length) * 11);
+        updateStatus({
+          busy: true,
+          percent,
+          message: `分段导出 ${index + 1} / ${splitRects.length}`,
+          detail: `已保存 ${partFilename}`
+        }, tab.id);
+      }
+
+      updateStatus({
+        busy: false,
+        percent: 100,
+        message: "导出完成",
+        detail: `已分段导出 ${splitRects.length} 张，总大小 ${formatBytes(totalFileSizeBytes)}`
+      }, tab.id);
+
+      return {
+        ...firstResult,
+        fileSizeBytes: totalFileSizeBytes,
+        splitCount: splitRects.length,
+        captureMode: capturePlan.captureMode,
+        startPage: capturePlan.startPage,
+        endPage: capturePlan.endPage,
+        totalPages: positions.length,
+        downloadDeferred: false
+      };
+    }
 
     const result = await runOffscreenTask({
       type: "STITCH_AND_DOWNLOAD",
@@ -204,6 +270,7 @@ async function handleCapture(options = {}, explicitTab = null) {
       return {
         ...result,
         downloadDeferred: true,
+        splitCount: 1,
         captureMode: capturePlan.captureMode,
         startPage: capturePlan.startPage,
         endPage: capturePlan.endPage,
@@ -234,6 +301,7 @@ async function handleCapture(options = {}, explicitTab = null) {
 
     return {
       ...result,
+      splitCount: 1,
       captureMode: capturePlan.captureMode,
       startPage: capturePlan.startPage,
       endPage: capturePlan.endPage,
@@ -597,6 +665,75 @@ function buildExportMetrics(metrics, exportRect) {
   };
 }
 
+function buildAutoSplitExportRects(capturePlan, metrics, thresholdPx) {
+  const exportRect = capturePlan?.exportMetrics?.exportRect;
+  if (!exportRect) {
+    return [];
+  }
+
+  const threshold = normalizeSplitHeightThreshold(thresholdPx);
+  if (!Number.isFinite(exportRect.height) || exportRect.height <= threshold) {
+    return [exportRect];
+  }
+
+  const rowTops = [...new Set((capturePlan.selectedPositions || []).map((position) => position.y))]
+    .sort((a, b) => a - b);
+  const rowRects = rowTops.map((top) => {
+    const rowBottom = Math.min(metrics.fullHeight, top + metrics.captureHeight);
+    return intersectVerticalRange(exportRect.top, exportRect.bottom, top, rowBottom);
+  }).filter(Boolean);
+
+  if (!rowRects.length) {
+    return [exportRect];
+  }
+
+  const chunks = [];
+  let chunkStart = rowRects[0].top;
+  let chunkBottom = rowRects[0].bottom;
+
+  for (let index = 1; index < rowRects.length; index += 1) {
+    const row = rowRects[index];
+    const nextBottom = Math.max(chunkBottom, row.bottom);
+    if ((nextBottom - chunkStart) > threshold && chunkBottom > chunkStart) {
+      chunks.push(buildExportRectFromRange(exportRect, chunkStart, chunkBottom));
+      chunkStart = row.top;
+      chunkBottom = row.bottom;
+      continue;
+    }
+    chunkBottom = nextBottom;
+  }
+  chunks.push(buildExportRectFromRange(exportRect, chunkStart, chunkBottom));
+  return chunks;
+}
+
+function normalizeSplitHeightThreshold(rawValue) {
+  const parsed = Number.parseInt(String(rawValue ?? "").trim(), 10);
+  if (!Number.isInteger(parsed) || parsed < 2000) {
+    return 18000;
+  }
+  return parsed;
+}
+
+function intersectVerticalRange(exportTop, exportBottom, rowTop, rowBottom) {
+  const top = Math.max(exportTop, rowTop);
+  const bottom = Math.min(exportBottom, rowBottom);
+  if (bottom <= top) {
+    return null;
+  }
+  return { top, bottom };
+}
+
+function buildExportRectFromRange(baseRect, top, bottom) {
+  return {
+    left: baseRect.left,
+    right: baseRect.right,
+    top,
+    bottom,
+    width: Math.max(1, baseRect.right - baseRect.left),
+    height: Math.max(1, bottom - top)
+  };
+}
+
 function countTotalPages(metrics) {
   return buildVerticalPages(metrics).length;
 }
@@ -863,6 +1000,15 @@ async function downloadWithFallback(url, filename, saveAs) {
       conflictAction: "uniquify"
     });
   }
+}
+
+function appendFilenameSuffix(filename, suffix) {
+  const name = String(filename || "capture.png");
+  const dotIndex = name.lastIndexOf(".");
+  if (dotIndex <= 0) {
+    return `${name}${suffix}`;
+  }
+  return `${name.slice(0, dotIndex)}${suffix}${name.slice(dotIndex)}`;
 }
 
 function clamp(value, min, max) {
