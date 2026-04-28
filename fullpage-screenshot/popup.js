@@ -17,6 +17,7 @@ const customWidthWrapper = document.getElementById("custom-width-field");
 const maxSizeValueField = document.getElementById("max-size-value");
 const maxSizeUnitField = document.getElementById("max-size-unit");
 const hideFixedField = document.getElementById("hide-fixed");
+const dedupeHeadersField = document.getElementById("dedupe-headers");
 const saveAsField = document.getElementById("save-as");
 const captureButton = document.getElementById("capture-button");
 const pageTitle = document.getElementById("page-title");
@@ -324,6 +325,7 @@ function bindEvents() {
     maxSizeValueField,
     maxSizeUnitField,
     hideFixedField,
+    dedupeHeadersField,
     saveAsField
   ]) {
     field.addEventListener("change", persistOptions);
@@ -435,6 +437,7 @@ async function restoreOptions() {
   maxSizeValueField.value = saved?.maxSizeValue || "";
   maxSizeUnitField.value = saved?.maxSizeUnit || "MB";
   hideFixedField.checked = saved?.hideFixed !== false;
+  dedupeHeadersField.checked = saved?.dedupeHeaders !== false;
   saveAsField.checked = saved?.saveAs !== false;
   startPageField.value = saved?.startPage || "";
   endPageField.value = saved?.endPage || "";
@@ -458,8 +461,9 @@ async function persistOptions() {
     maxSizeValue: maxSizeValueField.value,
     maxSizeUnit: maxSizeUnitField.value,
     hideFixed: hideFixedField.checked,
-    saveAs: saveAsField.checked,
     language: normalizeLang(languageField.value)
+    dedupeHeaders: dedupeHeadersField.checked,
+    saveAs: saveAsField.checked
   };
 
   await chrome.storage.local.set({ [STORAGE_KEY]: payload });
@@ -555,6 +559,7 @@ function buildOptions(pageRange) {
     customWidth: Number.isFinite(customWidth) ? customWidth : null,
     maxFileSizeBytes: maxSizeBytes,
     hideFixedElements: hideFixedField.checked,
+    suppressRepeatedHeaders: dedupeHeadersField.checked,
     saveAs: saveAsField.checked,
     copyToClipboard: true,
     deferDownloadForClipboard: true

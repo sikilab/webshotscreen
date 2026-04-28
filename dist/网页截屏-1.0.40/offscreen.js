@@ -287,8 +287,8 @@ async function drawTile(ctx, image, tile, metrics, exportRect, pixelRatio, clamp
     return;
   }
 
-  const sourceX = (metrics.captureRect.left + (intersection.left - tile.x)) * pixelRatio;
-  const sourceY = (metrics.captureRect.top + (intersection.top - tile.y)) * pixelRatio;
+  const sourceX = (metrics.captureRect.left + (intersection.left - tileRect.left)) * pixelRatio;
+  const sourceY = (metrics.captureRect.top + (intersection.top - tileRect.top)) * pixelRatio;
   const cropWidth = Math.max(1, Math.min(
     intersection.width * pixelRatio,
     image.width - sourceX

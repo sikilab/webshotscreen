@@ -1,4 +1,4 @@
-# Full Page Capture
+# 网页截屏 / Web Page Screenshot
 
 ![网页截屏 Icon](icons/scissor-crop-128.png)
 
@@ -33,12 +33,6 @@ A Chrome 116+ extension for capturing full-page screenshots with support for spe
 - 支持保存图片的同时复制图片到系统剪贴板。
 - Copy the exported image to the system clipboard while saving it.
 
-- 支持在弹窗中一键切换中文 / English。
-- Support one-click Chinese / English language switching in the popup.
-
-- 支持超长页面自动分段导出，默认阈值为导出高度 `18000px`，并可在弹窗中调整。
-- Support auto split export for very long pages, with a default export-height threshold of `18000px` configurable in popup settings.
-
 - 默认可在截图前临时隐藏 `fixed / sticky` 悬浮元素，减少重复头部和浮层干扰。
 - Optionally hide `fixed / sticky` elements before capture to reduce duplicated headers and overlays.
 
@@ -58,9 +52,9 @@ A Chrome 116+ extension for capturing full-page screenshots with support for spe
 4. Click `Load unpacked`.
 5. Select the folder: `D:\project\chrome-extension\fullpage-screenshot`
 
-推荐优先加载当前源码目录，或使用 `../dist/网页截屏-1.0.43`。
+推荐优先加载当前源码目录，或使用 `../dist/网页截屏-1.0.42`。
 
-It is recommended to load this source folder first, or use `../dist/网页截屏-1.0.43`.
+It is recommended to load this source folder first, or use `../dist/网页截屏-1.0.42`.
 
 ### 方式二：从 Releases 安装 / Option 2: Install from Releases
 
@@ -75,7 +69,7 @@ It is recommended to load this source folder first, or use `../dist/网页截屏
 ## 使用说明 / Usage
 
 1. 打开你要截图的网页。
-2. 点击工具栏中的“Full Page Capture”图标。
+2. 点击工具栏中的“网页截屏”图标。
 3. 选择截图目标区域：右侧滚动区、左侧滚动区，或整页。
 4. 选择截图范围：
    - 全部屏
@@ -85,7 +79,7 @@ It is recommended to load this source folder first, or use `../dist/网页截屏
 6. 点击“开始整页截图”。
 
 1. Open the page you want to capture.
-2. Click the `Full Page Capture` extension icon.
+2. Click the `网页截屏 / Web Page Screenshot` extension icon.
 3. Choose the target capture region: right scroll area, left scroll area, or full page.
 4. Choose the capture scope:
    - All screens
@@ -118,9 +112,6 @@ It is recommended to load this source folder first, or use `../dist/网页截屏
 
 - 设置“目标文件大小上限”后，扩展会优先压缩质量，必要时再缩小分辨率。
 - When a target file size limit is set, the extension reduces quality first and resolution if needed.
-
-- 当导出高度超过“自动分段阈值”时，扩展会自动按段导出多张图片以保持清晰度。
-- When export height exceeds the auto split threshold, the extension exports multiple parts to preserve image clarity.
 
 - 图片保存时会同时尝试复制到系统剪贴板，便于直接粘贴到聊天工具或文档中。
 - The extension also tries to copy the exported image to the system clipboard for direct pasting into chat tools or documents.
@@ -159,10 +150,6 @@ It is recommended to load this source folder first, or use `../dist/网页截屏
 - 扩展不会要求登录账号。
 - The extension does not require sign-in.
 
-### Privacy Policy URL
-
-- https://github.com/sikilab/webshotscreen/blob/main/PRIVACY.md
-
 ## 适用场景 / Recommended Use Cases
 
 - ChatGPT、Claude、Gemini 等左右分栏页面截图
@@ -189,7 +176,3 @@ It is recommended to load this source folder first, or use `../dist/网页截屏
 ## 当前版本 / Current Version
 
 `1.0.29`
-
-## 作者 / Author
-
-`sikilab`

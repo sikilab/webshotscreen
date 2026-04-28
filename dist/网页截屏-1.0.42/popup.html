@@ -12,18 +12,11 @@
         <p class="eyebrow">Chrome Extension</p>
         <h1>网页截屏</h1>
         <p class="subtitle">把网页滚动拼接成一张图片，并按分辨率和目标文件大小上限导出。</p>
-        <label class="field">
-          <span id="lang-label">界面语言</span>
-          <select id="language-select" name="language">
-            <option value="zh-CN">中文</option>
-            <option value="en">English</option>
-          </select>
-        </label>
       </header>
 
       <section class="page-card">
         <div class="page-meta">
-          <span id="label-current-page" class="label">当前页面</span>
+          <span class="label">当前页面</span>
           <strong id="page-title">正在读取…</strong>
           <span id="page-size" class="hint">准备获取页面尺寸和总屏数</span>
         </div>
@@ -31,7 +24,7 @@
 
       <form id="capture-form">
         <label class="field">
-          <span id="label-scroll-target">滚动区域</span>
+          <span>滚动区域</span>
           <select id="scroll-target" name="scrollTarget">
             <option value="right">右侧滚动区（默认）</option>
             <option value="left">左侧滚动区</option>
@@ -40,7 +33,7 @@
         </label>
 
         <label class="field">
-          <span id="label-capture-scope">截图范围</span>
+          <span>截图范围</span>
           <select id="capture-scope" name="captureScope">
             <option value="all">全部屏</option>
             <option value="custom">自选屏数</option>
@@ -49,7 +42,7 @@
         </label>
 
         <div id="page-range-field" class="field hidden">
-          <span id="label-page-range">屏幕范围</span>
+          <span>屏幕范围</span>
           <div class="inline-group range-group">
             <input id="start-page" name="startPage" type="number" min="1" step="1" placeholder="开始屏">
             <input id="end-page" name="endPage" type="number" min="1" step="1" placeholder="结束屏">
@@ -58,17 +51,17 @@
         </div>
 
         <div id="line-range-field" class="field hidden">
-          <span id="label-line-range">起止线范围</span>
+          <span>起止线范围</span>
           <div class="stack-group">
             <button id="pick-line-range-button" class="secondary" type="button">去页面设置起止线并自动截图</button>
             <button id="clear-line-range-button" class="ghost" type="button">清空起止线</button>
           </div>
           <p id="line-range-status" class="hint">还未设置起止线。</p>
-          <p id="line-range-tip" class="hint">点击后回到页面，先点开始线，再滚动到结束位置点结束线，可跨多屏；完成后会自动保存图片。</p>
+          <p class="hint">点击后回到页面，先点开始线，再滚动到结束位置点结束线，可跨多屏；完成后会自动保存图片。</p>
         </div>
 
         <label class="field">
-          <span id="label-export-format">导出格式</span>
+          <span>导出格式</span>
           <select id="format" name="format">
             <option value="png">PNG（无损，文件更大）</option>
             <option value="webp">WebP（推荐）</option>
@@ -77,7 +70,7 @@
         </label>
 
         <label class="field">
-          <span id="label-resolution">导出分辨率</span>
+          <span>导出分辨率</span>
           <select id="resolution-preset" name="resolutionPreset">
             <option value="1">原始尺寸</option>
             <option value="0.75">75%</option>
@@ -87,19 +80,13 @@
           </select>
         </label>
 
-        <label class="field">
-          <span id="label-split-threshold">自动分段阈值高度（px）</span>
-          <input id="split-height-threshold" name="splitHeightThreshold" type="number" min="2000" step="500" placeholder="18000">
-          <p id="split-threshold-tip" class="hint">导出高度超过该值时自动分段导出，优先保持清晰度。</p>
-        </label>
-
         <label class="field hidden" id="custom-width-field">
-          <span id="label-custom-width">自定义宽度（像素）</span>
+          <span>自定义宽度（像素）</span>
           <input id="custom-width" name="customWidth" type="number" min="320" step="10" placeholder="例如 1440">
         </label>
 
         <div class="field">
-          <span id="label-max-size">目标文件大小上限</span>
+          <span>目标文件大小上限</span>
           <div class="inline-group">
             <input id="max-size-value" name="maxSizeValue" type="number" min="0" step="0.1" placeholder="留空表示不限">
             <select id="max-size-unit" name="maxSizeUnit">
@@ -107,7 +94,7 @@
               <option value="KB">KB</option>
             </select>
           </div>
-          <p id="max-size-tip" class="hint">设置后会优先压缩质量，必要时自动降低分辨率。</p>
+          <p class="hint">设置后会优先压缩质量，必要时自动降低分辨率。</p>
         </div>
 
         <label class="checkline">
@@ -133,7 +120,7 @@
 
       <section class="status-card">
         <div class="status-head">
-          <span id="label-progress" class="label">进度</span>
+          <span class="label">进度</span>
           <strong id="status-text">等待开始</strong>
         </div>
         <div class="progress-track" aria-hidden="true">
@@ -142,7 +129,7 @@
         <p id="result-text" class="hint">建议截图时保持标签页在前台，不要切换窗口。</p>
       </section>
 
-      <footer id="footer-note" class="footer-note">copyright by sikilab</footer>
+      <footer class="footer-note">copyright by changsu</footer>
     </main>
 
     <script src="popup.js"></script>
