@@ -50,6 +50,8 @@ const I18N = {
     labelMaxFileSize: "目标文件大小上限",
     labelProgress: "进度",
     labelHideFixed: "截图前临时隐藏 fixed / sticky 悬浮元素",
+    labelDedupeHeadersTitle: "列表 / 表格表头只保留第一屏",
+    labelDedupeHeadersDescription: "推荐开启：后续屏截图前会隐藏重复吸顶表头，并避免屏与屏之间重复拼接。",
     labelSaveAs: "导出时弹出另存为窗口",
     pickLineRange: "去页面设置起止线并自动截图",
     clearLineRange: "清空起止线",
@@ -144,6 +146,8 @@ const I18N = {
     labelMaxFileSize: "Target File Size Limit",
     labelProgress: "Progress",
     labelHideFixed: "Temporarily hide fixed / sticky elements before capture",
+    labelDedupeHeadersTitle: "Keep list / table headers only on the first screen",
+    labelDedupeHeadersDescription: "Recommended: repeated sticky headers are hidden before later screen captures.",
     labelSaveAs: "Show Save As dialog when exporting",
     pickLineRange: "Set start/end lines on page and auto capture",
     clearLineRange: "Clear line range",
@@ -461,7 +465,7 @@ async function persistOptions() {
     maxSizeValue: maxSizeValueField.value,
     maxSizeUnit: maxSizeUnitField.value,
     hideFixed: hideFixedField.checked,
-    language: normalizeLang(languageField.value)
+    language: normalizeLang(languageField.value),
     dedupeHeaders: dedupeHeadersField.checked,
     saveAs: saveAsField.checked
   };
@@ -1163,7 +1167,11 @@ function applyLocalizedTexts() {
   setTextContentById("label-max-size", t("labelMaxFileSize"));
   const checkText = document.querySelectorAll(".checkline span");
   if (checkText[0]) checkText[0].textContent = t("labelHideFixed");
-  if (checkText[1]) checkText[1].textContent = t("labelSaveAs");
+  const dedupeTitleEl = document.querySelector(".option-card strong");
+  const dedupeDescriptionEl = document.querySelector(".option-card small");
+  if (dedupeTitleEl) dedupeTitleEl.textContent = t("labelDedupeHeadersTitle");
+  if (dedupeDescriptionEl) dedupeDescriptionEl.textContent = t("labelDedupeHeadersDescription");
+  if (checkText[2]) checkText[2].textContent = t("labelSaveAs");
   setTextContentById("label-current-page", t("currentPage"));
   setTextContentById("label-page-range", t("labelPageRange"));
   setTextContentById("label-line-range", t("labelLineRange"));
