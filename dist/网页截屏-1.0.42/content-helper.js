@@ -12,6 +12,7 @@
     target: null,
     hiddenElements: [],
     repeatingHeaderElements: [],
+    neutralizedStickyElements: [],
     styleElement: null,
     lineSelection: null,
     linePicker: null,
@@ -87,6 +88,7 @@
     }
     if (resolvedOptions.suppressRepeatedHeaders) {
       state.repeatingHeaderElements = collectRepeatingHeaderElements(selection);
+      state.neutralizedStickyElements = neutralizeRepeatingHeaderStickiness();
       applyRepeatingHeaderVisibility(true);
     }
     if (resolvedOptions.hideFixedElements) {
@@ -125,6 +127,7 @@
       restoreInlineStyle(item.element, "visibility", item.value, item.priority);
     }
     restoreRepeatingHeaderElements();
+    restoreNeutralizedStickyElements();
     if (state.styleElement?.isConnected) state.styleElement.remove();
     if (state.target?.kind === "element" && state.target.element && document.contains(state.target.element)) {
       state.target.element.scrollLeft = state.elementScrollLeft;
@@ -135,6 +138,7 @@
     state.target = null;
     state.hiddenElements = [];
     state.repeatingHeaderElements = [];
+    state.neutralizedStickyElements = [];
     state.styleElement = null;
     state.extensionUiHidden = false;
     state.keepRepeatingHeadersForCurrentTile = true;
@@ -817,6 +821,71 @@
       height: Math.max(1, Math.round(element.getBoundingClientRect().height || 0)),
       capturedOnce: false
     };
+  }
+
+  function neutralizeRepeatingHeaderStickiness() {
+    const records = [];
+    const seen = new Set();
+
+    for (const item of state.repeatingHeaderElements) {
+      const root = item?.element;
+      if (!(root instanceof HTMLElement) || !document.contains(root)) {
+        continue;
+      }
+
+      const candidates = [root, ...root.querySelectorAll("*")];
+      for (const node of candidates) {
+        if (!(node instanceof HTMLElement) || seen.has(node)) {
+          continue;
+        }
+
+        const style = window.getComputedStyle(node);
+        if (style.position !== "sticky") {
+          continue;
+        }
+
+        seen.add(node);
+        records.push({
+          element: node,
+          position: node.style.getPropertyValue("position"),
+          positionPriority: node.style.getPropertyPriority("position"),
+          top: node.style.getPropertyValue("top"),
+          topPriority: node.style.getPropertyPriority("top"),
+          bottom: node.style.getPropertyValue("bottom"),
+          bottomPriority: node.style.getPropertyPriority("bottom"),
+          left: node.style.getPropertyValue("left"),
+          leftPriority: node.style.getPropertyPriority("left"),
+          right: node.style.getPropertyValue("right"),
+          rightPriority: node.style.getPropertyPriority("right"),
+          zIndex: node.style.getPropertyValue("z-index"),
+          zIndexPriority: node.style.getPropertyPriority("z-index")
+        });
+
+        node.style.setProperty("position", "static", "important");
+        node.style.setProperty("top", "auto", "important");
+        node.style.setProperty("bottom", "auto", "important");
+        node.style.setProperty("left", "auto", "important");
+        node.style.setProperty("right", "auto", "important");
+        node.style.setProperty("z-index", "auto", "important");
+      }
+    }
+
+    return records;
+  }
+
+  function restoreNeutralizedStickyElements() {
+    for (const item of state.neutralizedStickyElements) {
+      if (!(item?.element instanceof HTMLElement) || !document.contains(item.element)) {
+        continue;
+      }
+
+      restoreInlineStyle(item.element, "position", item.position, item.positionPriority);
+      restoreInlineStyle(item.element, "top", item.top, item.topPriority);
+      restoreInlineStyle(item.element, "bottom", item.bottom, item.bottomPriority);
+      restoreInlineStyle(item.element, "left", item.left, item.leftPriority);
+      restoreInlineStyle(item.element, "right", item.right, item.rightPriority);
+      restoreInlineStyle(item.element, "z-index", item.zIndex, item.zIndexPriority);
+    }
   }
 
   function getElementNaturalTopInSelection(element, selection = null) {

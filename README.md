@@ -44,13 +44,17 @@ A Chrome 116+ extension for capturing full-page screenshots with support for spe
 2. 打开 Chrome，访问 `chrome://extensions/`。
 3. 打开右上角“开发者模式 / Developer mode”。
 4. 点击“加载已解压的扩展程序 / Load unpacked”。
-5. 选择当前目录：`chrome-extension/fullpage-screenshot`
+5. 选择当前目录：`D:\project\chrome-extension\fullpage-screenshot`
 
 1. Download or clone this repository.
 2. Open Chrome and go to `chrome://extensions/`.
 3. Enable `Developer mode`.
 4. Click `Load unpacked`.
-5. Select the folder: `chrome-extension/fullpage-screenshot`
+5. Select the folder: `D:\project\chrome-extension\fullpage-screenshot`
+
+推荐优先加载 `fullpage-screenshot` 源码目录，或使用 `dist/网页截屏-1.0.43`。
+
+It is recommended to load the `fullpage-screenshot` source folder first, or use `dist/网页截屏-1.0.43`.
 
 ### 方式二：从 Releases 安装 / Option 2: Install from Releases
 

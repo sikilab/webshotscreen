@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "网页截屏",
   "description": "截取网页滚动区域并拼接成一张图片，支持不同分辨率、文件大小上限、保存和剪贴板复制。",
-  "version": "1.0.43",
+  "version": "1.0.41",
   "minimum_chrome_version": "116",
   "icons": {
     "16": "icons/scissor-crop-16.png",

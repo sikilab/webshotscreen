@@ -52,9 +52,9 @@ A Chrome 116+ extension for capturing full-page screenshots with support for spe
 4. Click `Load unpacked`.
 5. Select the folder: `D:\project\chrome-extension\fullpage-screenshot`
 
-推荐优先加载当前源码目录，或使用 `../dist/网页截屏-1.0.43`。
+推荐优先加载当前源码目录，或使用 `../dist/网页截屏-1.0.40`。
 
-It is recommended to load this source folder first, or use `../dist/网页截屏-1.0.43`.
+It is recommended to load this source folder first, or use `../dist/网页截屏-1.0.40`.
 
 ### 方式二：从 Releases 安装 / Option 2: Install from Releases
 
